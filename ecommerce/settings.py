@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecom',
     'widget_tweaks',
+    'paypal.standard.ipn'
 
 ]
+PAYPAL_RECEIVER_EMAIL = 'carlo.zanieri@gmail.com'
+PAYPAL_TEST = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -7,7 +7,7 @@ Youtube :youtube.com/lazycoders
 
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from ecom import views
 from django.contrib.auth.views import LoginView,LogoutView
 urlpatterns = [
@@ -20,7 +20,7 @@ urlpatterns = [
     path('search', views.search_view,name='search'),
     path('send-feedback', views.send_feedback_view,name='send-feedback'),
     path('view-feedback', views.view_feedback_view,name='view-feedback'),
-
+    path('paypal/', include('paypal.standard.ipn.urls')),
     path('adminclick', views.adminclick_view),
     path('adminlogin', LoginView.as_view(template_name='ecom/adminlogin.html'),name='adminlogin'),
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
@@ -53,6 +53,8 @@ urlpatterns = [
     path('remove-from-cart/<int:pk>', views.remove_from_cart_view,name='remove-from-cart'),
     path('customer-address', views.customer_address_view,name='customer-address'),
     path('payment-success', views.payment_success_view,name='payment-success'),
-
+    path('/paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
+    path('/paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),
+    
 
 ]

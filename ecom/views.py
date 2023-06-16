@@ -1,4 +1,7 @@
+from venv import logger
+from django.dispatch import receiver
 from django.shortcuts import render,redirect,reverse
+from django.test import TransactionTestCase
 from . import forms,models
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.mail import send_mail
@@ -6,7 +9,11 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
-
+from paypal.standard.forms import PayPalPaymentsForm
+from django.views.generic import TemplateView
+from django.views.generic import FormView
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
 def home_view(request):
     products=models.Product.objects.all()
     if 'product_ids' in request.COOKIES:
@@ -539,3 +546,87 @@ def contactus_view(request):
             send_mail(str(name)+' || '+str(email),message, settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form':sub})
+
+class PaypalFormView(FormView):
+    template_name = 'paypal_form.html'
+    form_class = PayPalPaymentsForm
+
+    def get_initial(self):
+        return {
+            'business': 'your-paypal-business-address@example.com',
+            'amount': 20,
+            'currency_code': 'EUR',
+            'item_name': 'Example item',
+            'invoice': 1234,
+            'notify_url': self.request.build_absolute_uri(reverse('paypal-ipn')),
+            'return_url': self.request.build_absolute_uri(reverse('paypal-return')),
+            'cancel_return': self.request.build_absolute_uri(reverse('paypal-cancel')),
+            'lc': 'EN',
+            'no_shipping': '1',
+        }
+class PaypalReturnView(TemplateView):
+    template_name = 'paypal_success.html'
+
+class PaypalCancelView(TemplateView):
+    template_name = 'paypal_cancel.html'
+
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+
+@receiver(valid_ipn_received)
+def paypal_payment_received(sender, **kwargs):
+    ipn_obj = sender
+    if ipn_obj.payment_status == ST_PP_COMPLETED:
+        # WARNING !
+        # Check that the receiver email is the same we previously
+        # set on the `business` field. (The user could tamper with
+        # that fields on the payment form before it goes to PayPal)
+        if ipn_obj.receiver_email != 'carlo.zanieri@gmail.com':
+            # Not a valid payment
+            return
+
+        # ALSO: for the same reason, you need to check the amount
+        # received, `custom` etc. are all what you expect or what
+        # is allowed.
+        try:
+            my_pk = ipn_obj.invoice
+            mytransaction = MyTransaction.objects.get(pk=my_pk)
+            assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'EUR'
+        except Exception:
+            logger.exception('Paypal ipn_obj data not valid!')
+        else:
+            mytransaction.paid = True
+            mytransaction.save()
+    else:
+        logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
+
+
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+
+@receiver(valid_ipn_received)
+def paypal_payment_received(sender, **kwargs):
+    ipn_obj = sender
+    if ipn_obj.payment_status == ST_PP_COMPLETED:
+        # WARNING !
+        # Check that the receiver email is the same we previously
+        # set on the `business` field. (The user could tamper with
+        # that fields on the payment form before it goes to PayPal)
+        if ipn_obj.receiver_email != 'carlo.zanieri@gmail.com':
+            # Not a valid payment
+            return
+
+        # ALSO: for the same reason, you need to check the amount
+        # received, `custom` etc. are all what you expect or what
+        # is allowed.
+        try:
+            my_pk = ipn_obj.invoice
+            mytransaction = TransactionTestCase.objects.get(pk=my_pk)
+            assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'EUR'
+        except Exception:
+            logger.exception('Paypal ipn_obj data not valid!')
+        else:
+            mytransaction.paid = True
+            mytransaction.save()
+    else:
+        logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
