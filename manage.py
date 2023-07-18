@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # Use the runserver addr/port defined in settings.
     from django.conf import settings
     default_addr = getattr(settings, 'RUNSERVER_DEFAULT_ADDR', '0.0.0.0')
-    default_port = getattr(settings, 'RUNSERVER_DEFAULT_PORT', 8888)
+    default_port = getattr(settings, 'RUNSERVER_DEFAULT_PORT', 80)
     from django.core.management.commands import runserver as core_runserver
     original_handle = core_runserver.Command.handle
 
