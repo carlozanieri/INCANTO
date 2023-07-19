@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecom',
     'widget_tweaks',
+    "django_extensions",
     'paypal.standard.ipn'
 
 ]
