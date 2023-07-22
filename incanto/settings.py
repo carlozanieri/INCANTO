@@ -25,7 +25,7 @@ STATIC_DIR=os.path.join(BASE_DIR,'static')
 SECRET_KEY = '#vw(03o=(9kbvg!&2d5i!2$_58x@_-3l4wujpow6(ym37jxnza'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 ###ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost']
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'ecom',
     'widget_tweaks',
     "django_extensions",
-    'paypal.standard.ipn'
+    "sslserver",
+    "paypal.standard.ipn"
 
 ]
 PAYPAL_RECEIVER_EMAIL = 'carlo.zanieri@gmail.com'
