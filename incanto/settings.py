@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecom',
+    'incanto',
     'widget_tweaks',
     "django_extensions",
     "sslserver",
