@@ -30,9 +30,9 @@ if __name__ == '__main__':
 
     def handle(self, *args, **options):
         if not options.get('addrport'):
-            options['addrport'] = '%s:%d' % (default_addr, int(default_port))
+            options['addrport'] = '%s:%d' % (default_addr, int(80))
         elif options.get('addrport').isdigit():
-            options['addrport'] = '%s:%d' % (default_addr, int(options['addrport']))
+            options['addrport'] = '%s:%d' % (default_addr, int(options['0.0.0.0']))
         return original_handle(self, *args, **options)
 
         core_runserver.Command.handle = handle
