@@ -83,10 +83,12 @@
       {% for p in products %}
   {% if p %}
 
+  {{total}}= ({{total}}+{{p.price}})
       <tr>
         <td> {{p.name}}</td>
         <td> <img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td> {{total}}</td>
+        <td> {{p.price}}</td>
+        
         <td>{{p.description}}</td>
 
         <td><a class="btn btn-danger btn-xs" href="{% url 'remove-from-cart' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>

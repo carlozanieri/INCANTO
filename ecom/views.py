@@ -14,6 +14,19 @@ from django.views.generic import TemplateView
 from django.views.generic import FormView
 from django.urls import reverse
 from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+import paypalrestsdk
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
+paypalrestsdk.configure({
+    "mode": "live",  # Change to "live" for production
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_SECRET,
+})
+
 def home_view(request):
     products=models.Product.objects.all()
     if 'product_ids' in request.COOKIES:
@@ -547,13 +560,22 @@ def contactus_view(request):
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form':sub})
 
+class PaypalReturnView(TemplateView):
+    template_name = 'paypal_success.html'
+
+class PaypalCancelView(TemplateView):
+    template_name = 'paypal_cancel.html'
+
+from paypal.standard.models import ST_PP_COMPLETED
+from paypal.standard.ipn.signals import valid_ipn_received
+
 class PaypalFormView(FormView):
     template_name = 'paypal_form.html'
     form_class = PayPalPaymentsForm
 
     def get_initial(self):
         return {
-            'business': 'your-paypal-business-address@example.com',
+            'business': 'carlo.zanieri@gmail.com',
             'amount': 20,
             'currency_code': 'EUR',
             'item_name': 'Example item',
@@ -569,9 +591,6 @@ class PaypalReturnView(TemplateView):
 
 class PaypalCancelView(TemplateView):
     template_name = 'paypal_cancel.html'
-
-from paypal.standard.models import ST_PP_COMPLETED
-from paypal.standard.ipn.signals import valid_ipn_received
 
 @receiver(valid_ipn_received)
 def paypal_payment_received(sender, **kwargs):
@@ -630,3 +649,46 @@ def paypal_payment_received(sender, **kwargs):
             mytransaction.save()
     else:
         logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
+
+def create_payment(request):
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal",
+        },
+        "redirect_urls": {
+            "return_url": request.build_absolute_uri(reverse('execute_payment')),
+            "cancel_url": request.build_absolute_uri(reverse('payment_failed')),
+        },
+        "transactions": [
+            {
+                "amount": {
+                    "total": "1.00",  # Total amount in USD
+                    "currency": "USD",
+                },
+                "description": "Payment for Product/Service",
+            }
+        ],
+    })
+
+    if payment.create():
+        return redirect(payment.links[1].href)  # Redirect to PayPal for payment
+    else:
+        return render(request, 'ecom/payment_failed.html')
+
+def execute_payment(request):
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+    
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        return render(request, 'ecom/payment_success.html')
+    else:
+        return render(request, 'ecom/payment_failed.html')
+
+def payment_failed(request):
+    return render(request, 'ecom/payment_failed.html')
+
+def payment_checkout(request):
+    return render(request, 'ecom/checkout.html')

@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPal JS SDK Standard Integration</title>
-  </head>
-  <body>
-    <div id="paypal-button-container"></div>
-    <p id="result-message"></p>
-    <!-- Replace the "test" client-id value with your client-id -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AYTmOHHAQ7JbsuubIKtqzSWFuntXMqQ7OcB5Qzljao4NGSBiVzEpehH-K8ib0rknJJUu7jaOTaP8Je1t&components=buttons&enable-funding=paylater,venmo,card" data-sdk-integration-source="integrationbuilder_sc"></script>
-    <script>
-      window.paypal
+window.paypal
   .Buttons({
     style: {
       shape: "rect",
@@ -110,7 +96,3 @@ function resultMessage(message) {
   const container = document.querySelector("#result-message");
   container.innerHTML = message;
 }
-
-    </script>
-  </body>
-</html>

@@ -28,7 +28,7 @@ SECRET_KEY = '#vw(03o=(9kbvg!&2d5i!2$_58x@_-3l4wujpow6(ym37jxnza'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-###ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost']
+#ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -44,11 +44,15 @@ INSTALLED_APPS = [
     'widget_tweaks',
     "django_extensions",
     "sslserver",
-    "paypal.standard.ipn"
+    'paypal.standard.ipn',
+    'paypalrestsdk'
+    
 
 ]
 PAYPAL_RECEIVER_EMAIL = 'carlo.zanieri@gmail.com'
 PAYPAL_TEST = True
+PAYPAL_CLIENT_ID = 'AYTmOHHAQ7JbsuubIKtqzSWFuntXMqQ7OcB5Qzljao4NGSBiVzEpehH-K8ib0rknJJUu7jaOTaP8Je1t'
+PAYPAL_SECRET = 'EB2Sksvbt0z4gU0ZR6MFjxzcWQFk92Qp7jYNBywcndPlTqg-xVoPHVwEqfmngKaRBCrGH3IxBXjTe2ZX'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
