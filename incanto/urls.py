@@ -55,7 +55,7 @@ urlpatterns = [
     path('payment-success', views.payment_success_view,name='payment-success'),
     path('/paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
     path('/paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),
-    
+    path('payments/', include('payments.urls')),
     path('checkout/', views.payment_checkout, name='checkout_payment'),
     path('create_payment/', views.create_payment, name='create_payment'),
     path('execute_payment/', views.execute_payment, name='execute_payment'),
