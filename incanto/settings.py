@@ -30,7 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost']
 
-PAYMENT_HOST = 'localhost:80'
+PAYMENT_HOST = '0.0.0.0:7070'
 
 PAYMENT_USES_SSL = False
 # Application definition
