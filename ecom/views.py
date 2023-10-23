@@ -20,7 +20,7 @@ import paypalrestsdk
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from payments import get_payment_model, RedirectNeeded
 paypalrestsdk.configure({
     "mode": "live",  # Change to "live" for production
     "client_id": settings.PAYPAL_CLIENT_ID,
@@ -692,3 +692,17 @@ def payment_failed(request):
 
 def payment_checkout(request):
     return render(request, 'ecom/checkout.html')
+
+def payment_details(request, payment_id):
+    payment = get_object_or_404(get_payment_model(), id=payment_id)
+
+    try:
+        form = payment.get_form(data=request.POST or None)
+    except RedirectNeeded as redirect_to:
+        return redirect(str(redirect_to))
+
+    return TemplateResponse(
+        request,
+        'payment.html',
+        {'form': form, 'payment': payment}
+    )

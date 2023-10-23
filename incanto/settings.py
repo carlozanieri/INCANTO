@@ -31,8 +31,12 @@ ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost']
 
 PAYMENT_HOST = '0.0.0.0:7070'
-
+PAYMENT_MODEL = 'ecom.models.Payment_2'
 PAYMENT_USES_SSL = False
+
+PAYMENT_VARIANTS = {
+    'default': ('payments.dummy.DummyProvider', {})
+}
 # Application definition
 
 INSTALLED_APPS = [
