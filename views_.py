@@ -22,8 +22,8 @@ def create_payment(request):
         "transactions": [
             {
                 "amount": {
-                    "total": "10.00",  # Total amount in USD
-                    "currency": "USD",
+                    "total": "1.00",  # Total amount in USD
+                    "currency": "EU",
                 },
                 "description": "Payment for Product/Service",
             }
