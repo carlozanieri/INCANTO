@@ -4,8 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PayPal JS SDK Demo</title>
+  <title>Incanto Pipe</title>
 </head>
+{% extends 'ecom/homebase.html' %}
+{% load static %}
+{% block content %}
 
 <body>
   <div id="paypal-button-container"></div>
@@ -51,7 +54,7 @@
             const response = await fetch(`http://localhost:9597/orders/${data.orderID}/capture`, {
               method: "POST"
             });
-
+            heckout/
             const details = await response.json();
             // Three cases to handle:
             //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
@@ -87,5 +90,5 @@
     })
   </script>
 </body>
-
+{% endblock content %}
 </html>

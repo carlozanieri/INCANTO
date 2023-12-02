@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 paypalrestsdk.configure({
-    "mode": "sandbox",  # Change to "live" for production
+    "mode": "live",  # Change to "live" for production
     "client_id": settings.PAYPAL_CLIENT_ID,
     "client_secret": settings.PAYPAL_SECRET,
 })
